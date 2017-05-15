@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "Lista.h"
+
+struct lista{
+	int qtd;
+	struct cliente dados[MAX];
+
+};
+
+		//cria uma lista vazia
+Lista* criar_lista(){
+
+	Lista *lj;
+
+	lj = (Lista*) malloc(sizeof(struct lista));
+	if(lj != NULL){
+		lj->qtd = 0;
+	}
+	return lj;
+}
+
+		//libera a lista
+void libera_lista(Lista* lj){
+	free(lj);
+}
+
+
+		//imprime toda a lista
+void imprimir_lista(Lista* lj){
+	if(lj == NULL){
+		return;
+	}
+	int i;
+	for(i=0; i<lj->qtd; i++){
+		printf("Index: %d\n", i);
+		printf("Nome: %s\n", lj->dados[i].nome);
+		printf("CPF: %s\n", lj->dados[i].cpf);
+		printf("---------------------------\n");
+	}
+	if(lj->qtd > 0){
+		printf("Quantidade de Clientes: %d\n", lj->qtd);	
+		return;
+	}
+	printf("Lista vazia!\n");
+}
+
+//imprime cliente
+void imprimir_cliente(struct cliente cl){
+	printf("Nome: %s\n", cl.nome);
+	printf("CPF: %s\n", cl.cpf);
+	printf("---------------------------\n\n\n");
+}
+
+
+//remove cliente pelo indice
+Cliente remover_cliente(Lista* lj, int index){
+
+	int i,k;
+
+	struct cliente cli = lj->dados[index];
+	if(index > lj->qtd){
+		printf("Clietne n�o pertence a lista\n");
+		return cli;
+	}
+	//imprime o cliente q sera removido
+	printf("Cliente removido: \n");
+	imprimir_cliente(lj->dados[index]);
+
+	for(i=index; i<lj->qtd; i++){
+		lj->dados[i] = lj->dados[i+1];
+	}
+
+	lj->qtd--;
+	return cli;
+}
+
+//insere numa determinada posicao da lista
+int inserir_cliente(Lista* lj, struct cliente cl, int index){
+	int i,k;
+	if(lj == NULL){
+		return 0;
+	}
+	if(lj->qtd == MAX){
+		return 0;
+	}
+
+	for(i=0; i<lj->qtd; i++){
+		if(i == index){
+			for(k=lj->qtd; k >= index; k--){
+				lj->dados[k+1] = lj->dados[k];
+			}
+		}
+	}
+
+	lj->dados[index] = cl;
+	lj->qtd++;
+	return 1;
+}
+
+//busca cliente na lista
+int buscar(Lista* lj, char cpf[]){
+	int i;
+
+	for(i=0; i<=lj->qtd; i++){
+		// printf("%s\n", li->dados[i].cpf);
+		// printf("%s\n", cpf);
+		if(strcmp(lj->dados[i].cpf, cpf) == 0){
+
+			return i;
+		}
+	}
+	printf("N�o est� na lista\n");
+	return -1;
+
+}
+
+
+#define MAX 100
+
+struct cliente{
+	char nome[30];
+	char cpf[11];
+}	;
+
+typedef struct lista Lista;
+typedef struct cliente Cliente;
+
+Lista* criar_lista();
+
+Cliente remover_cliente(Lista* li, int index);
+
+void libera_lista(Lista* li);
+
+void imprimir_lista(Lista* li);
+
+void imprimir_cliente(struct cliente cl);
+
+int inserir_cliente(Lista* li, struct cliente cl, int index);
+
+int buscar(Lista* li, char cpf[]);
+
+//Aluno: M�rio Evandro do Nascimento J�nior
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "Lista.c"
+
+Lista* criar_lista();
+Lista* remove_inicio(Lista* li);
+Lista* remover_com_index(Lista* li, int index);
+int inserir_com_index(Lista* li, struct cliente cl, int index);
+
+int main(){
+	
+	struct cliente c[8] = {{"Mario","319505266"},
+                           {"Lucas","319503267"},
+                           {"Iago","319503150"},
+                           {"Gustavo","490491015"},
+                     	   {"Juca","545355124"},
+                     	   {"Maria","465454161"},
+                     	   {"Teste3","546354161"},
+                     	   {"Teste4","4354554415"}};
+
+
+	Lista* lj = criar_lista();
+	
+	int i;
+    for(i=0; i <= 4; i++)
+        inserir_cliente(lj, c[i], i);
+	
+	//inserir_cliente(li, c[5], 3);
+
+	//printf("Busca: %d\n\n", buscar(li, "1546354"));
+	
+	remover_cliente(lj, 3);
+	imprimir_lista(lj);
+	libera_lista(lj);
+	return 0;
+}
+
